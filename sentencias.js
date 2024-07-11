@@ -209,3 +209,109 @@ db.users.find(
 )
 
 
+
+var user5 = {
+    name: 'user5',
+    email: 'user5@gmail.com',
+    support: true,
+    createdAt: new Date()
+}
+
+//Obtener todos los usuarios que tengan el atributo edad
+db.users.find(
+    {
+        age:{
+            $exists: true
+        }
+    }
+)
+
+//obtener todos los usuarios cuyo atributo createdAt sea de tipo date
+db.users.find(
+    {
+        createdAt:{
+            $type: 'date'
+        }
+    }
+)
+
+//Alias de los tipos
+//Double            'double'
+//String            'string'
+//Object            'Object'
+//Array             'array'
+//ObjectId          'objectId'
+//Boolean           'boolean'
+//Date              'date'
+//Null              'null'
+//Reg. Expression   'regex'
+//Timestamp         'timestamp'
+
+
+//Si quisieramos actualizar el valor de support a falso hay dos maneras
+//db.users.save(user5edit) -> obsoleto
+
+var user5edit = db.users.findOne( //Obtenemos el objeto a modificar
+    {name: 'user5'}
+)
+
+user5edit       //Puedo visualizar el objeto y sus atributos
+user5edit.name
+user5edit.support
+
+//Primera manera
+db.users.updateOne(
+    { _id: user5edit._id },
+    { $set: { support: false } }
+)
+//Encuentra el usuario con la _id y con $set cambia el valor de support a false.
+
+
+//Segunda manera
+user5edit.support = false //Nosotros modificamos el valor de user5edit
+
+db.users.replaceOne(
+    { _id: user5edit._id },
+    user5edit             
+)
+//Reemplazamos todo el docuemento con los valores de user5edit
+
+
+//De ambas maneras también se puede agregar un nuevo atributo
+db.users.updateOne(
+    { _id: user5edit._id },
+    { $set: { age: 21 } }
+)
+
+user5edit.age = 21 //Agregamos el nuevo atributo
+db.users.replaceOne(
+    { _id: user5edit._id },
+    user5edit             //Se reemplaza todo el documento por el nuevo modificado
+)
+
+
+//Agregar el atributo support a todos aquellos que no lo posean
+db.users.updateMany(
+    {       //Criterios de búsqueda
+        support: {
+            $exists: false //"En donde no exista support"
+        }
+    },     
+    {       //Cambios a implemementar
+        $set: {
+            support: false //Agreamos el atributo support con falso
+        }
+
+    }      
+)
+
+db.users.updateOne(
+    {
+        name:'user1'
+    },
+    {
+        $set: {
+            support: true
+        }
+    }
+)
